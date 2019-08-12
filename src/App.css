@@ -7,22 +7,17 @@
 .table {
   margin-left: auto;
   margin-right: auto;
+  border-collapse: collapse;
 }
 
 .table tr td{
   border:1px solid white;
-  background: #999999;
-  width: 16px;
-  height: 16px;
+  width: 23px;
+  height: 23px;
   text-align: center;
 }
 
-.table tr td.clicked {
-    background: #333333;
-}
-.table tr td.mine {
-    background: #FF0000;
-}
+
 
 .gameName {
     font-family: 'Satisfy', cursive;
@@ -61,3 +56,47 @@
     z-index: 3; */
 
 }
+.visited {
+    background-color:#28deaa;
+    color: white;
+}
+.value {
+    background-color:#28deaa;
+    color: white;
+}
+.bomb {
+    background-color: white;
+    width: 20px;
+    height: 20px;
+}
+.flag {
+    background-color:white;
+    width: 20px;
+    height: 20px;
+}
+.icon {
+    width:25px;
+    height:25px;
+}
+.iconName {
+    font-size: 15px;
+    color: white; 
+    font-weight: 900;
+}
+.upper-deck{
+    display:inline-flex;
+}
+.emoji {
+    width:25px;
+    height:25px;
+    margin-left: 80px;
+    margin-right: 80px;
+}
+#game-wrapper {
+    display: none;
+}
+.try {
+    margin-right:150px; 
+}
+
+

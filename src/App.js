@@ -1,15 +1,28 @@
 import React, {Component } from 'react';
 import './App.css';
+import Bomb from './dynamite.png';
+import Flag from './flag.png';
+import Dynamite from './dynamitee.png';
+import Timer from './hourglass.png';
+import Happy from './happy.png';
+import Win from './in-love.png';
+import Sad from './sad.png';
+import Think from './thinking.png';
+import Try from './try.png';
+import Home from './mansion.png';
 
 class App extends Component {
     state = {
         matrix : [],
         minimumTime : 0,
         isBombPlaced: false,
-        level: 0
+        level: 0,
+        emojiState:0,
 
     }
     initializeMatrixHandler = (num) => {
+        document.getElementById('game-wrapper').style.display = 'block';
+        document.getElementById('table').style.pointerEvents = 'unset';
         document.getElementById('wrapper').style.display = 'none';
         let obj = { value : "" , actValue : "", i: 0, j: 0},i,j;
         let arr = Array(num).fill().map(() => Array(num).fill({...obj}));
@@ -29,7 +42,6 @@ class App extends Component {
     }
 
     doComputation = (matrix,obj,event) => {
-        debugger;
         event.preventDefault();
         if(!this.state.isBombPlaced) {
             this.bombGenerateHandler(matrix,obj,event);
@@ -55,60 +67,8 @@ class App extends Component {
         }
        
         this.fillNumbersHandler(matrix,obj,event);      
-        // let randomNo,randomNoArr = [],digits; 
-        // let arr = [];
-        // while( arr.length < 1 || (arr[0] === arr[1] || arr[1] === arr[2] || arr[2] === arr[0]) || arr.includes(0) || arr.includes(obj.i) || arr.includes(obj.j)) {
-
-        //     randomNo = Math.floor(Math.random() * (999-100) + 100);
-        //     digits = randomNo.toString().split('');
-        //     randomNoArr = digits.map(Number);
-        //     arr = randomNoArr; 
-        // }
-        // let bombPlaces = [],i,j,laststr,revStr;
-        // randomNo = randomNo.toString();
-        // for (i = 0 ; i < randomNo.length ; i++) {
-        //     if(i === randomNo.length - 1) {
-        //         laststr = randomNoArr[0].toString().concat(randomNoArr[i].toString()); 
-        //         revStr = laststr.split('').reverse().join('');             
-        //     } else {
-        //         j=i+2;
-        //         laststr = randomNo.substr(i,j);
-        //         revStr = (randomNo.substr(i,j)).split('').reverse().join('');      
-        //     }
-        //     bombPlaces.push(revStr);
-        //     bombPlaces.push(laststr);
-        //     bombPlaces.push(randomNoArr[i].toString().concat(randomNoArr[i].toString()));
-        // }
-        
-        // this.bombPlaceHandler(bombPlaces,matrix)let matrix= arr.map((data)  => {
-        //     return data.map( val => {
-        //         return val = {...obj};
-        //     })
-            
-        // });
-        
     }
-    // bombPlaceHandler = (bombPlaces,arr) => {
-    //     var obj = {value: 0, i:0,j:0};
-    //     var modifiedArr= arr.map( data => {
-    //         return data.map( val => {
-    //             return val = {...obj};
-    //         })
-            
-    //     })
-    //     console.log(bombPlaces);
-    //     let i=0,j=0,k;
-    //     for ( k=0; k < bombPlaces.length ;k++) {
-    //         debugger;
-    //         i = parseInt(bombPlaces[k]) % 10;
-    //         j = parseInt(bombPlaces[k]/10) % 100;
-    //         modifiedArr[i][j].value = '*';
-    //         modifiedArr[i][j].i = i;
-    //         modifiedArr[i][j].j =j;
 
-    //     }
-    //     this.fillNumbersHandler(modifiedArr);
-    // }
     fillNumbersHandler = (arr,obj,event) => {
         var rowLimit = arr.length-1,i,j;
         var columnLimit = arr[0].length-1;
@@ -132,21 +92,21 @@ class App extends Component {
         this.showValue(arr,obj,true,true,event);
     }
    showValue = (matrix,s,isDirectElement,isBombPlaced,event) => {
-       debugger;
     console.log(matrix);
-    //   if(event.button === 0 && isDirectElement) {
-    //       if(matrix[s.i][s.j].actValue === 'f') {
-    //         matrix[s.i][s.j].actValue = '' ;
-    //       } else {
-    //         matrix[s.i][s.j].actValue = 'f' ;
-    //       }
-    //       this.setState({matrix:matrix,isBombPlaced:isBombPlaced});
-    //       return;
-    //   } 
+ 
 
     let i = s.i,j=s.j,arr=matrix,rowLimit = matrix.length-1,columnLimit = matrix.length-1; 
     if(arr[i][j].value === '*' && isDirectElement) {
-        document.getElementById('gameOver').innerHTML = "gameOver";
+        matrix.map( val => {
+            return ( val.map( s => {
+                    if (s.value === '*') {
+                        s.actValue = '*';
+                    }
+                    return s;           
+            }));
+        });
+        document.getElementById('table').style.pointerEvents = 'none';
+        this.setState({matrix:arr,isBombPlaced:isBombPlaced,emojiState:3});
         return;
     }  
     if(arr[i][j].value !== "" && isDirectElement && arr[i][j].value !=='s') {
@@ -155,13 +115,12 @@ class App extends Component {
         this.setState({matrix:arr,isBombPlaced:isBombPlaced});
         return;
     }
-    debugger;
     for(var x = Math.max(0, i-1); x <= Math.min(i+1, rowLimit); x++) {
         for(var y = Math.max(0, j-1); y <= Math.min(j+1, columnLimit); y++) {
-            if(arr[x][y].value !== "" && arr[x][y].value!== '*' && arr[x][y].value!=='s') {
+            if(Number.isInteger(arr[x][y].value) && arr[x][y].actValue !== 'f') {
                 arr[x][y].actValue = arr[x][y].value;
             } else {
-                if(arr[x][y].value !== 's') {
+                if(arr[x][y].value !== 's' && arr[x][y].value !== '*' && arr[x][y].actValue !== 'f') {
                     arr[x][y].value = 's';
                     this.showValue(arr,arr[x][y],false,isBombPlaced,event);
                 }
@@ -169,12 +128,10 @@ class App extends Component {
         }
     }
     console.log(arr);
-    debugger;
-        this.checkGameOver(matrix);
+        this.checkGameOver(matrix,event);
      this.setState({matrix:arr,isBombPlaced:isBombPlaced});
    }
    setFlag = (matrix,obj,event) => {
-      debugger; 
     if (event.button === 0 && matrix[obj.i][obj.j].actValue !== 'f') {
         matrix[obj.i][obj.j].actValue = 'f'
     } else {
@@ -182,7 +139,7 @@ class App extends Component {
             matrix[obj.i][obj.j].actValue = '';   
         }
     }
-    this.checkGameOver(matrix)
+    this.checkGameOver(matrix,event);
     this.setState({matrix:matrix});
    }
    checkGameOver = (matrix) => {
@@ -193,7 +150,7 @@ class App extends Component {
                 count++;
             }  if(s.value === '*' && s.actValue === 'f') {
                 count++;
-            } if(s.value === s.actValue )  {
+            } if(s.value === s.actValue && s.actValue !== '')  {
                 count++;
             }
             return count;
@@ -201,43 +158,94 @@ class App extends Component {
         }));
     });
     if(count === Math.pow(matrix.length,2)) {
-        console.log('u won');
-        document.getElementById('gameOver').innerHTML = "u won!";
+        document.getElementById('table').style.pointerEvents = 'none';
+        this.setState({emojiState:4});
         return;
 
     }
+    // this.addClassName(event);
    }
-  
+   setHoverEmoji = () => {
+       if(this.state.emojiState <= 2)
+       this.setState({emojiState:1});
+   }
+   unsetHoverEmoji = () => {
+       if(this.state.emojiState <= 2)
+    this.setState({emojiState:0});
+   }
+    resetGame = () => {
+        this.setState({matrix:[],isBombPlaced:false,emojiState:0});
+        this.initializeMatrixHandler(this.state.level);
+   }
+   goHome = () => {
+    document.getElementById('wrapper').style.display = 'block';
+    this.setState({matrix:[],isBombPlaced:false,emojiState:0,level:0});
+    document.getElementById('game-wrapper').style.display = 'none';
+}
+//    addClassName = (event) => {
+//     if(obj.actValue === '' && obj.value === 's' ) {
+//         event.target.className = "visited";
+//     } else if( obj.actValue === obj.value && obj.value) {
+//         event.target.className = "visited";
+//     }
+//    {obj.actValue}</div> : (obj.actValue === '' && obj.value === '' ?
+//     <div className="empty default ">{obj.actValue}</div> : ( obj.actValue === obj.value ?
+//         <div className="value ">{obj.actValue}</div> : <div className="bomb ">{obj.actValue}</div>   
+//     ))}
+//    }
     render() {
        let matrix = [...this.state.matrix];   
         return(
             <React.Fragment>
             <div className = "gameName">MINESWEEPER</div>
             <div className = "wrapper" id="wrapper">
-                <button className="button" onClick={() => this.initializeMatrixHandler(5)}>Easy</button><br/>
-                <button className="button" onClick={() => this.initializeMatrixHandler(7)}>Medium</button><br/>
-                <button className="button" onClick={() => this.initializeMatrixHandler(9)}>Hard</button>
+                <button className="button" onClick={() => this.initializeMatrixHandler(8)}>Easy</button><br/>
+                <button className="button" onClick={() => this.initializeMatrixHandler(9)}>Medium</button><br/>
+                <button className="button" onClick={() => this.initializeMatrixHandler(10)}>Hard</button>
             </div>
-            <div>
-            <table className="table">
-                <tbody>
-                    { matrix.map( data => {
-                        return (
-                            <tr className="tr">
-                                { data.map(obj => {
-                                    return (
-                                        <td onClick = { (event) => this.setFlag(matrix,obj,event)} onContextMenu = { (event) => this.doComputation(matrix,obj,event)} >
-                                            {obj.actValue}
-                                        </td>
-                                    );
-                                })}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </table>
+            <div id="game-wrapper">
+                <div className="upper-deck">
+                <img className="icon" src={Dynamite}/><div className="iconName">6</div>
+                <img className="emoji" src=
+                    {this.state.emojiState === 0 ? Happy : 
+                    this.state.emojiState === 1 ? Think :
+                    this.state.emojiState === 3 ? Sad : Win }
+                />
+
+                </div>
+                <table id="table" className="table" onMouseOver={() => this.setHoverEmoji()} onMouseOut = { () => this.unsetHoverEmoji()} >
+                    <tbody>
+                        { matrix.map( data => {
+                            return (
+                                <tr className="tr">
+                                    { data.map(obj => {
+                                        return (
+                                            <td className = {
+                                                (obj.actValue === '' && obj.value === 's') ? "visited" : (
+                                                (obj.value === '*' && obj.actValue === '*' ? "bomb" :   
+                                                (obj.actValue === obj.value && obj.value !== '' ) ? "value":(
+                                                (obj.actValue === 'f' ) ? "flag" :    
+                                                "default"   
+                                                ))) 
+                                            }
+                                            onClick = { (event) => this.setFlag(matrix,obj,event)} onContextMenu = { (event) => this.doComputation(matrix,obj,event)} >
+                                                { obj.value === '*' && obj.actValue === '*' ? <img className="bomb" src={Bomb}/> : (
+                                                obj.actValue === 'f' ? <img className = "flag" src={Flag}/> : obj.actValue)
+                                                }
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+                <div class="upper-deck">
+                <img className="icon try" src={Try} onClick={()=>  this.resetGame()}/>
+                <img className="icon" src={Home} onClick={() => this.goHome()}/>
+        
+                </div>
             </div>
-            <div id="gameOver" className="gameOver"></div>
             </React.Fragment>
         );
     }
